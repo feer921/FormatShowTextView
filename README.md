@@ -1,7 +1,7 @@
 # FormatShowTextView
 一个格式化显示所输入的文本的控件，可用于验证码的输入显示等可自定义显示格式的控件
 
-#先看效果图吧，暂时没时间写使用说明
+## 本自定义控件能实现以下功能以及可扩展
 
 ![使用控件效果图](https://github.com/Lyphy999/FormatShowTextView/blob/master/arts/demo1.png)
 
