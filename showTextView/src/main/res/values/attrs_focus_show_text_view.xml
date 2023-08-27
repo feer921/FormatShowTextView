@@ -1,16 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources >
 
-    <declare-styleable name="FocusShowTextView">
+    <declare-styleable name="FormatShowTextView">
+        <!--  预览显示 Debug 的 文本      -->
+        <attr name="showDebugText" format="string"/>
+
+        <!-- 用户所输入的文本将被替代显示为的值       -->
+        <attr name="showTextReplacedToStr" format="string"/>
+
         <!-- 要显示文本的控件个数 -->
         <attr name="showTextViewCount" format="integer" />
+
+        <!--  设置显示文本的控件的宽      -->
         <attr name="showTextViewWidth" format="dimension" />
+
+        <!--  设置显示文本的控件的高      -->
         <attr name="showTextViewHeight" format="dimension" />
-        <!-- 显示文本控件间的间距 -->
+
+        <!-- 显示文本控件间的间距宽 -->
         <attr name="showTextViewGapWidth" format="dimension" />
+
+        <!--  设置显示文本的字体大小      -->
         <attr name="showTextSize" format="dimension" />
+
+        <!--  设置显示文本的颜色      -->
         <attr name="showTextColor" format="reference|color" />
+
+        <!--  设置显示文本的控件的背景      -->
         <attr name="showTextViewBackground" format="reference|color" />
+
         <!-- 是否显示出内部EditText输入的文本 -->
         <attr name="showDebugInputText" format="boolean" />
 

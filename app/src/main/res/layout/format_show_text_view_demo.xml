@@ -1,7 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:orientation="vertical"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="用于验证码:" />
+
+    <com.fee.showtextview.FormatShowTextView
+        android:id="@+id/tvVerifyCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        tools:showDebugText="6666" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="自定义配置：" />
+
+    <com.fee.showtextview.FormatShowTextView
+        android:id="@+id/tvCustomSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:showDebugInputText="true"
+        app:showTextColor="#f00"
+        app:showTextViewBackground="#0af"
+        app:showTextViewCount="6"
+        tools:showDebugText="999999" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="隐藏输入:" />
+
+
+    <com.fee.showtextview.FormatShowTextView
+        android:id="@+id/tvHideText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:showDebugInputText="true"
+        app:showTextReplacedToStr="*"
+        tools:showDebugText="9999" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="自定义输入文本承载显示的视图:" />
+
+    <com.fee.showtextview.FormatShowTextView
+        android:id="@+id/tvShowCustomView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:inputType="text"
+        app:showTextViewBackground="@mipmap/text_matts_bg"
+        tools:showDebugText="万事如意" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="米字格承载显示:" />
+
+    <com.fee.showtextview.FormatShowTextView
+        android:id="@+id/tvShowBgView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:inputType="text"
+        app:showTextViewBackground="@mipmap/text_mizi_bg"
+        tools:showDebugText="大吉大利" />
+
 
 </LinearLayout>

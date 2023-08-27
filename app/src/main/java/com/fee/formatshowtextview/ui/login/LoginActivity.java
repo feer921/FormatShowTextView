@@ -3,8 +3,9 @@ package com.fee.formatshowtextview.ui.login;
 import android.app.Activity;
 
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -22,9 +23,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fee.formatshowtextview.FormatShowTextDemoActivity;
 import com.fee.formatshowtextview.R;
-import com.fee.formatshowtextview.ui.login.LoginViewModel;
-import com.fee.formatshowtextview.ui.login.LoginViewModelFactory;
+import com.fee.showtextview.FormatShowTextView;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,7 +35,8 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
+
+        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
         final EditText usernameEditText = findViewById(R.id.username);
@@ -112,11 +114,18 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+//                loadingProgressBar.setVisibility(View.VISIBLE);
+//                loginViewModel.login(usernameEditText.getText().toString(),
+//                        passwordEditText.getText().toString());
+
+                Intent intent = new Intent(LoginActivity.this, FormatShowTextDemoActivity.class);
+                startActivity(intent);
             }
         });
+
+        FormatShowTextView fstv = findViewById(R.id.formatTextView);
+        fstv.showDebugTextView(true);
+
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
