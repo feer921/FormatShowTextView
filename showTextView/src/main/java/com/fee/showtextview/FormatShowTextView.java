@@ -42,13 +42,26 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
 
     private LinearLayout llShowTextViewsContainer;
 
+    /**
+     * 本控件默认的用来承载用户输入的显示的控件
+     */
     private TextView[] showTextViews;
 
     private ICanShowTextView[] canShowTextViews;
 
-    private EditText innerEditText;
+    /**
+     * 内部真正的输入文本控件
+     */
+    private final EditText innerEditText;
 
     private boolean isDebugShowInputText;
+
+    /**
+     * 默认情况下的 将用户所输入的要显示的文本的替代文本
+     * eg.: "*"
+     * def = null 不设置
+     */
+    private String mDefShowTextReplaceStr = null;
 
     /**
      * 显示文本的控件间的间距,px
@@ -72,40 +85,40 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
 
     public FormatShowTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.FocusShowTextView, defStyleAttr, 0);
-        countOfShowTextViews = ta.getInteger(R.styleable.FocusShowTextView_showTextViewCount, countOfShowTextViews);
+        TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.FormatShowTextView, defStyleAttr, 0);
+        countOfShowTextViews = ta.getInteger(R.styleable.FormatShowTextView_showTextViewCount, countOfShowTextViews);
 //        int attrsIndexCount = ta.getIndexCount();
 //        for (int i = 0; i < attrsIndexCount; i++) {
 //            int curAttr = ta.getIndex(i);
 //            switch (curAttr) {
-//                case common.base.R.styleable.FocusShowTextView_showTextViewCount:
+//                case common.base.R.styleable.FormatShowTextView_showTextViewCount:
 //                    countOfShowTextViews = ta.getInteger(curAttr, countOfShowTextViews);
 //                    break;
 //                default:
 //                    break;
 //            }
 //        }
-        isDebugShowInputText = ta.getBoolean(R.styleable.FocusShowTextView_showDebugInputText, false);
+        isDebugShowInputText = ta.getBoolean(R.styleable.FormatShowTextView_showDebugInputText, false);
         //读取出对内部EditText的配置参数
         int inputType = InputType.TYPE_CLASS_NUMBER;
-        inputType = ta.getInt(R.styleable.FocusShowTextView_android_inputType, inputType);
+        inputType = ta.getInt(R.styleable.FormatShowTextView_android_inputType, inputType);
         innerEditText = new EditText(context);
         innerEditText.setCursorVisible(false);
         innerEditText.setTextColor(0);
         innerEditText.setTextSize(0.1f);
         innerEditText.setInputType(inputType);
-        int imeOptionsAttr = R.styleable.FocusShowTextView_android_imeOptions;
+        int imeOptionsAttr = R.styleable.FormatShowTextView_android_imeOptions;
         if (ta.hasValue(imeOptionsAttr)) {
             int curImeOptions = ta.getInt(imeOptionsAttr, innerEditText.getImeOptions());
             innerEditText.setImeOptions(curImeOptions);
         }
-        int imeActionIdAttr = R.styleable.FocusShowTextView_android_imeActionId;
-        int imeActionLabelAttr = R.styleable.FocusShowTextView_android_imeActionLabel;
+        int imeActionIdAttr = R.styleable.FormatShowTextView_android_imeActionId;
+        int imeActionLabelAttr = R.styleable.FormatShowTextView_android_imeActionLabel;
         if (ta.hasValue(imeActionLabelAttr) && ta.hasValue(imeActionIdAttr)) {
             int oldActionId = innerEditText.getImeActionId();
             innerEditText.setImeActionLabel(ta.getText(imeActionLabelAttr), ta.getInt(imeActionIdAttr, oldActionId));
         }
-        int editBackgroundAttr = R.styleable.FocusShowTextView_editTextBg;
+        int editBackgroundAttr = R.styleable.FormatShowTextView_editTextBg;
         if (ta.hasValue(editBackgroundAttr)) {
             innerEditText.setBackgroundDrawable(ta.getDrawable(editBackgroundAttr));
         }
@@ -115,19 +128,22 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
         if (countOfShowTextViews <= 0) {
             countOfShowTextViews = 4;
         }
-
+        int replaceShowTextAttr =  R.styleable.FormatShowTextView_showTextReplacedToStr;
+        if (ta.hasValue(replaceShowTextAttr)){
+            mDefShowTextReplaceStr = ta.getString(replaceShowTextAttr);
+        }
         //每个showTextView之间的间距
-        showTextViewGapWidth = ta.getDimensionPixelSize(R.styleable.FocusShowTextView_showTextViewGapWidth, PxUtil.getDimenResPixelSize(context, R.dimen.dp_20));
-        int showTextSize = ta.getDimensionPixelSize(R.styleable.FocusShowTextView_showTextSize, PxUtil.getDimenResPixelSize(context, R.dimen.sp_25));
-        ColorStateList textColor = ta.getColorStateList(R.styleable.FocusShowTextView_showTextColor);
-        Drawable showTextViewBg = ta.getDrawable(R.styleable.FocusShowTextView_showTextViewBackground);
-        int defWH = PxUtil.getDimenResPixelSize(context, R.dimen.dp_60);
+        showTextViewGapWidth = ta.getDimensionPixelSize(R.styleable.FormatShowTextView_showTextViewGapWidth, getDimenResPx(R.dimen.dp_20));
+        int showTextSize = ta.getDimensionPixelSize(R.styleable.FormatShowTextView_showTextSize, getDimenResPx(R.dimen.sp_25));
+        ColorStateList textColor = ta.getColorStateList(R.styleable.FormatShowTextView_showTextColor);
+        Drawable showTextViewBg = ta.getDrawable(R.styleable.FormatShowTextView_showTextViewBackground);
+        int defWH = getDimenResPx(R.dimen.dp_60);
 
         int showTextViewWidth = defWH, showTextViewHeight = defWH;
-        int showTextViewWidthAttr = R.styleable.FocusShowTextView_showTextViewWidth;
+        int showTextViewWidthAttr = R.styleable.FormatShowTextView_showTextViewWidth;
         boolean isHasWidthAttr = ta.hasValue(showTextViewWidthAttr);
 
-        int showTextViewHeightAttr = R.styleable.FocusShowTextView_showTextViewHeight;
+        int showTextViewHeightAttr = R.styleable.FormatShowTextView_showTextViewHeight;
         boolean isHasHeightAttr = ta.hasValue(showTextViewHeightAttr);
         
         isNeedAutoMeasureViewWH = !isHasWidthAttr && !isHasHeightAttr;//没有给 showTextView 设置宽、高
@@ -146,10 +162,9 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
             }
         }
 
-
         LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(showTextViewWidth, showTextViewHeight);
         llp.rightMargin = showTextViewGapWidth;
-
+        //这里是先构建默认的显示文本的控件组
         showTextViews = new TextView[countOfShowTextViews];
         for (int i = 0; i < countOfShowTextViews; i++) {
             TextView aShowTextView = new TextView(context);
@@ -166,6 +181,7 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
                 aShowTextView.setBackgroundDrawable(showTextViewBg);
             }
             else {
+                //默认的背景
                 aShowTextView.setBackgroundResource(R.drawable.shape_stroke_1_radius_10_bg_white);
             }
 
@@ -174,11 +190,23 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
             }
             aShowTextView.setLayoutParams(llp);
         }
-
+        String debugText = null;
+        int debugTextAtrr = R.styleable.FormatShowTextView_showDebugText;
+        if (ta.hasValue(debugTextAtrr)){
+            debugText = ta.getString(debugTextAtrr);
+        }
         ta.recycle();
         initViews(context);
+        if (!TextUtils.isEmpty(debugText)) {
+            showTextOnShowTextView(debugText);
+        }
     }
     private TextView tvDebugInputInfo;
+
+    /**
+     * 主要初始化了 内部的 EditText、
+     * @param context Context
+     */
     private void initViews(Context context) {
         innerEditText.addTextChangedListener(this);
 //        innerEditText.setOnClickListener(this);
@@ -277,6 +305,7 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
         this.isNeedAutoMeasureViewWH = needAutoMeasureShowTextView;
         requestLayout();
     }
+
     /**
      * This method is called to notify you that, within <code>s</code>,
      * the <code>count</code> characters beginning at <code>start</code>
@@ -345,10 +374,15 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
             if (i < inputtedText.length()) {
                 char charAtIndex = inputtedText.charAt(i);
                 textAtIndex = String.valueOf(charAtIndex);
-                if (mReplaceShowText != null) {
-                    CharSequence willReplaceShowText = mReplaceShowText.onShowTextWillReplace(textAtIndex);
+
+                if (mWillShowTextReplacer != null) {
+                    CharSequence willReplaceShowText = mWillShowTextReplacer.onShowTextWillReplace(this,textAtIndex);
                     if (!TextUtils.isEmpty(willReplaceShowText)) {
                         textAtIndex = willReplaceShowText.toString();
+                    }
+                } else {//没有替代者
+                    if (!TextUtils.isEmpty(mDefShowTextReplaceStr)){
+                        textAtIndex = mDefShowTextReplaceStr;
                     }
                 }
             }
@@ -359,7 +393,7 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
                 showTextViews[i].setText(textAtIndex);
             }
             if (canShowTextViews != null) {
-                canShowTextViews[i].showText(textAtIndex);
+                canShowTextViews[i].showText(textAtIndex,i);
             }
         }
     }
@@ -397,9 +431,19 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
      * 该接口是给外部如果有自定义的控件来承载显示文本的控件实现的
      */
     public interface ICanShowTextView {
-        void showText(CharSequence textToShow);
+        /**
+         * {@link FormatShowTextView} 控件回调出来的交给本接口来显示用户输入的文本
+         * @param textToShow  要显示的文本
+         * @param textIndex 要显示的位置 index
+         */
+        void showText(CharSequence textToShow,int textIndex);
 
-        View theViewSelf();
+        /**
+         * 用来提供可承载显示文本的更复杂的控件
+         * @param belongIndex 当前View所属于的 位置 index
+         * @return View
+         */
+        View theViewSelf(int belongIndex);
     }
 
 //    public interface IShowTextViewProvider {
@@ -439,6 +483,9 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
         }
     }
 
+    /**
+     * 将用来显示文本的控件添加进本容器控件
+     */
     private void setUpShowTextViews() {
         if (llShowTextViewsContainer != null) {
             if (llShowTextViewsContainer.getChildCount() > 0) {
@@ -451,8 +498,10 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
                 }
             }
             if (canShowTextViews != null) {
+                int index = 0;
                 for (ICanShowTextView canShowTextView : canShowTextViews) {
-                    llShowTextViewsContainer.addView(canShowTextView.theViewSelf());
+                    llShowTextViewsContainer.addView(canShowTextView.theViewSelf(index));
+                    index ++;
                 }
             }
         }
@@ -495,36 +544,52 @@ public class FormatShowTextView extends FrameLayout implements TextWatcher, Inpu
 
     private void onInput(CharSequence inputtedText) {
         if (inputEventListener != null) {
-            inputEventListener.onInputEvent(inputtedText, inputtedText.length() == countOfShowTextViews);
+            inputEventListener.onInputEvent(this,inputtedText, inputtedText.length() == countOfShowTextViews);
         }
     }
     public interface IInputEventListener{
         /**
          * 监听输入事件
+         * @param theView 当前View
          * @param inputtedText 当前输入的文本
          * @param isComplete 是否输入完成
          */
-        void onInputEvent(CharSequence inputtedText, boolean isComplete);
+        void onInputEvent(FormatShowTextView theView,CharSequence inputtedText, boolean isComplete);
     }
 
-    private IWillReplaceShowText mReplaceShowText;
+    /**
+     * 将显示文本的替代者
+     */
+    private IWillShowTextReplacer mWillShowTextReplacer;
 
-    public void setNeedReplaceShowText(IWillReplaceShowText needReplaceShowText) {
-        this.mReplaceShowText = needReplaceShowText;
+    /**
+     * 设置需要替换所输入的文本显示,设置之后，本控件不显示用户原输入的文本，而替代者所返回的文本
+     * @param theReplacer IWillShowTextReplacer 将显示文本的替代者
+     */
+    public void setWillShowTextReplacer(IWillShowTextReplacer theReplacer) {
+        this.mWillShowTextReplacer = theReplacer;
     }
 
     /**
      * 可用来替换当前所输入的文本,而显示所替换的文本
      * 如：作为密码输入时，用户实际上输入明文，实现此接口后，可以替换成“*”
      */
-    public interface IWillReplaceShowText {
-
+    public interface IWillShowTextReplacer {
         /**
          * 给实现者一个机会把将要显示的文本给替换成自己想要怎么显示的文本
          * 如：作为密码显示的时候，用户实际上输入了明文，但需要被替换显示成"*"
+         * @param theView 当前控件
          * @param theInputtedIndexText 当前index下所输入的原文本
          * @return 要替换显示成想要的文本
          */
-        CharSequence onShowTextWillReplace(CharSequence theInputtedIndexText);
+        CharSequence onShowTextWillReplace(FormatShowTextView theView,CharSequence theInputtedIndexText);
+    }
+
+    public TextView[] getDefShowTextViews(){
+        return showTextViews;
+    }
+
+    private int getDimenResPx(int dimenRes){
+        return getContext().getResources().getDimensionPixelSize(dimenRes);
     }
 }
